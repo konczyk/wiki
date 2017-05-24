@@ -3,7 +3,7 @@ package wiki
 import scala.io.Source
 import scala.xml.pull._
 
-case class Page(id: Int, title: String, text: String)
+case class Page(id: String, title: String, text: String)
 
 class Parser(src: Source) extends Iterator[Page] {
 
@@ -18,7 +18,7 @@ class Parser(src: Source) extends Iterator[Page] {
     val title = getElement("title")
     val id = getElement("id")
     val text = getElement("text")
-    Page(id.toInt, title, text)
+    Page(id, title, text)
   }
 
   private def getElement(element: String) = {

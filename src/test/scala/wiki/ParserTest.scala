@@ -17,7 +17,7 @@ class ParserTest extends FunSuite {
       "<xml><x>vae</x><page><title>x</title><id>5</id><text>y</text></page><y/></xml>")
     val parser = new Parser(src)
     assert(parser.hasNext === true)
-    assert(parser.next === Page(5, "x", "y"))
+    assert(parser.next === Page("5", "x", "y"))
     assert(parser.hasNext === false)
   }
 
@@ -27,9 +27,9 @@ class ParserTest extends FunSuite {
         |<page><title>w</title><id>9</id><text>z</text></page></xml>""".stripMargin)
     val parser = new Parser(src)
     assert(parser.hasNext === true)
-    assert(parser.next === Page(8, "x", "y"))
+    assert(parser.next === Page("8", "x", "y"))
     assert(parser.hasNext === true)
-    assert(parser.next === Page(9, "w", "z"))
+    assert(parser.next === Page("9", "w", "z"))
     assert(parser.hasNext === false)
   }
 
@@ -38,7 +38,7 @@ class ParserTest extends FunSuite {
       "<xml><page><title>x</title><id>9</id><text>y &amp;nbsp; &lt;code/&gt;</text></page></xml>")
     val parser = new Parser(src)
     assert(parser.hasNext === true)
-    assert(parser.next === Page(9, "x", "y &amp;nbsp; &lt;code/&gt;"))
+    assert(parser.next === Page("9", "x", "y &amp;nbsp; &lt;code/&gt;"))
   }
 
 }

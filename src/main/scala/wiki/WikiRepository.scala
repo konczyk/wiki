@@ -1,6 +1,7 @@
 package wiki
 
 import org.elasticsearch.action.bulk.BulkResponse
+import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.client.Client
 import org.json4s.JsonDSL._
 import org.json4s.native.JsonMethods._
@@ -20,6 +21,9 @@ trait WikiRepository {
     }
     bulkRequest.get()
   }
+
+  def get(id: Int): GetResponse =
+    client.prepareGet(index, esType, id.toString).get()
 
   def pageToJson(page: Page): String =
     compact(render(("title", page.title) ~ ("text", page.text)))

@@ -36,12 +36,41 @@ $ ./sbt "runMain wiki.WikiAPI"
 
 ## Get page
 
+Getting page by its id number return a JSON string with title and text fields
+
 ```text
 curl -XGET 'localhost:9000/get/4'
 
 {
-  "id":"4",
   "title":"Alergologia",
-  "text":"'''Alergologia''' \u2013 dziedzina [[medycyna|medycyny]] zajmująca się rozpoznawaniem i [[leczenie|leczeniem]] [[alergia|schorzeń alergicznych]].\n\n== Zobacz też ==\n* [[alergen]]\n\n== Linki zewnętrzne ==\n{{wikisłownik|alergologia}}\n{{commonscat|Allergology}}\n* [http://www.pta.med.pl/ Polskie Towarzystwo Alergologiczne]\n* [http://www.alergologia.org/ Portal Lekarzy Alergologów 'alergologia.org']\n* [http://alergie.mp.pl/ Alergie.mp.pl, serwis wydawnictwa Medycyna Praktyczna]\n\n\n{{Zastrzeżenia|Medycyna}}\n\n{{Specjalności medyczne}}\n\n[[Kategoria:Alergologia| ]]\n[[Kategoria:Specjalności lekarskie]]"
+  "text":"'''Alergologia''' \u2013 dziedzina [[medycyna|medycyny]] zajmująca się ..."
 }
+```
+
+## Search pages
+
+Searching pages for a given word(s). Current strategy searches for document that
+contain all the words. Without additional params, first 10 hits are returned.
+
+```text
+curl -XGET 'localhost:9000/search?q=awk%20sed'
+
+[
+  {
+    "title":"Korn shell",
+    "text":"'''Korn shell''' ('''ksh''') jest jedną z [[Powłoka systemowa|powłok]]..."
+  },
+  {
+    "title":"AWK",
+    "text":"{{Język programowania infobox\n |logo =\n |nazwa = AWK\n |paradygmat = ..."
+  }
+  ...
+]
+```
+
+It is also possible to pass additional params to control pagination. Maximum number
+of pages is controlled by the maxHits setting in application.conf
+
+```text
+curl -XGET 'localhost:9000/search?q=awk%20sed&from=2&size=3'
 ```

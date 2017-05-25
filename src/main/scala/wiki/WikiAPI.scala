@@ -9,6 +9,7 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 
 import scala.io.StdIn
+import scala.util.{Failure, Success}
 
 object WikiAPI extends App {
 
@@ -21,13 +22,15 @@ object WikiAPI extends App {
   val port = conf.getInt("port")
 
   val esConf = new ElasticSearchConf()
-  val wikiService = new WikiService(new WikiRepository(esConf))
+  val repo = new WikiRepository(esConf)
 
   val route : Route = {
-    (path("get"/IntNumber) & get) {
-      wikiService.getPage(_) match {
-        case Some(page) => complete(page)
-        case None => complete(StatusCodes.NotFound)
+    (path("get"/IntNumber) & get) { id =>
+      onComplete(repo.get(id)) {
+        case Success(response) =>
+          if (response.isExists) complete(response.getSourceAsString)
+          else complete(StatusCodes.NotFound)
+        case Failure(_) => complete(StatusCodes.InternalServerError)
       }
     }
   }

@@ -3,7 +3,8 @@ package wiki
 object Indexer extends App {
 
   val parser = new Parser(scala.io.Source.fromFile(args(0)))
-  val wiki = new WikiRepository with ElasticSearchConf
+  val conf = new ElasticSearchConf()
+  val wiki = new WikiRepository(conf)
 
   private def index(pages: Iterator[Page], acc: Int): Int = {
     val data = pages.take(5000).toList
@@ -18,5 +19,5 @@ object Indexer extends App {
 
   val indexed = index(parser, 0)
   println(s"Indexed $indexed pages")
-  wiki.client.close()
+  conf.client.close()
 }

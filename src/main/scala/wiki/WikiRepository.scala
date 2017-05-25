@@ -2,30 +2,29 @@ package wiki
 
 import org.elasticsearch.action.bulk.BulkResponse
 import org.elasticsearch.action.get.GetResponse
-import org.elasticsearch.client.Client
 import org.json4s.JsonDSL._
 import org.json4s.native.JsonMethods._
 
-trait WikiRepository {
+class WikiRepository(conf: ElasticSearchConf) {
 
-  val index: String
-  val client: Client
-  val esType = "page"
+  private val dbIndex = conf.index
+  private val dbClient = conf.client
+  private val repoType = "page"
 
   def index(pages: List[Page]): BulkResponse = {
-    val bulkRequest = client.prepareBulk()
+    val bulkRequest = dbClient.prepareBulk()
     pages.foreach { page =>
       bulkRequest.add(
-        client.prepareIndex(index, esType, page.id)
+        dbClient.prepareIndex(dbIndex, repoType, page.id)
               .setSource(pageToJson(page)))
     }
     bulkRequest.get()
   }
 
   def get(id: Int): GetResponse =
-    client.prepareGet(index, esType, id.toString).get()
+    dbClient.prepareGet(dbIndex, repoType, id.toString).get()
 
-  def pageToJson(page: Page): String =
+  private def pageToJson(page: Page): String =
     compact(render(("title", page.title) ~ ("text", page.text)))
 
 }

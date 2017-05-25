@@ -10,7 +10,7 @@ import com.typesafe.config.ConfigFactory
 
 import scala.io.StdIn
 
-object WikiAPI extends App with WikiService {
+object WikiAPI extends App {
 
   implicit val system = ActorSystem("wki-api")
   implicit val materializer = ActorMaterializer()
@@ -20,9 +20,12 @@ object WikiAPI extends App with WikiService {
   val host = conf.getString("host")
   val port = conf.getInt("port")
 
+  val esConf = new ElasticSearchConf()
+  val wikiService = new WikiService(new WikiRepository(esConf))
+
   val route : Route = {
     (path("get"/IntNumber) & get) {
-      getPage(_) match {
+      wikiService.getPage(_) match {
         case Some(page) => complete(page)
         case None => complete(StatusCodes.NotFound)
       }

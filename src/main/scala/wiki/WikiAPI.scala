@@ -30,10 +30,8 @@ object WikiAPI extends App with WikiService {
   }
 
   val bindingFuture = Http().bindAndHandle(route, "localhost", 9000)
+
   println(s"Wiki API running at http://$host:$port\nHit RETURN to terminate")
   StdIn.readLine()
-
-  bindingFuture.flatMap(_.unbind())
-  system.terminate()
-
+  bindingFuture.flatMap(_.unbind()).onComplete(_ => system.terminate())
 }

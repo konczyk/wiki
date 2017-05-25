@@ -1,15 +1,19 @@
 package wiki
 
 import org.elasticsearch.action.bulk.BulkResponse
+import org.elasticsearch.action.get.GetResponse
+import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.index.query.{Operator, QueryBuilders}
 import org.json4s.JsonDSL._
 import org.json4s.native.JsonMethods._
-import scala.concurrent.Future
-import org.elasticsearch.action.get.GetResponse
 
-class WikiRepository(conf: ElasticSearchConf) {
+import scala.concurrent.Future
+
+case class WikiRepository(conf: ElasticSearchConf) {
 
   private val dbIndex = conf.index
   private val dbClient = conf.client
+  private val maxHits = conf.maxHits
   private val repoType = "page"
 
   def index(pages: List[Page]): BulkResponse = {
@@ -25,6 +29,15 @@ class WikiRepository(conf: ElasticSearchConf) {
   def get(id: Int): Future[GetResponse] = {
     val request = dbClient.prepareGet(dbIndex, repoType, id.toString)
     RequestExecutor[GetResponse]().execute(request)
+  }
+
+  def search(q: String, from: Option[Int], size: Option[Int]): Future[SearchResponse] = {
+    val request = dbClient.prepareSearch(dbIndex).setTypes(repoType)
+    request.setQuery(QueryBuilders.matchQuery("text", q).operator(Operator.AND))
+    from.foreach(x => request.setFrom(x))
+    size.foreach(x => request.setSize(math.min(x, maxHits)))
+
+    RequestExecutor[SearchResponse]().execute(request)
   }
 
   private def pageToJson(page: Page): String =

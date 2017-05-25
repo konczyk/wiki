@@ -15,7 +15,8 @@ class ElasticSearchConf {
   private val port = conf.getInt("port")
   private val address = new InetSocketTransportAddress(InetAddress.getByName(host), port)
 
-  val index = conf.getString("index")
+  val index: String = conf.getString("index")
+  val maxHits: Int = conf.getInt("maxHits")
   lazy val client: TransportClient =
     new PreBuiltTransportClient(Settings.EMPTY).addTransportAddress(address)
 }

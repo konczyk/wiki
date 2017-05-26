@@ -17,6 +17,6 @@ class ElasticSearchConf {
 
   val index: String = conf.getString("index")
   val maxHits: Int = conf.getInt("maxHits")
-  lazy val client: TransportClient =
+  def client: TransportClient =
     new PreBuiltTransportClient(Settings.EMPTY).addTransportAddress(address)
 }

@@ -14,3 +14,4 @@ libraryDependencies += "com.typesafe" % "config" % "1.3.1"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 libraryDependencies += "com.typesafe.akka" %% "akka-http-testkit" % "10.0.6" % "test"
+libraryDependencies += "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % "test"

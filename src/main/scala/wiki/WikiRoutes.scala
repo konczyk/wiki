@@ -7,6 +7,7 @@ import akka.http.scaladsl.server.Route
 import scala.util.{Failure, Success}
 
 import org.json4s.native.Serialization.write
+import scala.collection.JavaConverters._
 
 class WikiRoutes(private val repo: WikiRepository) {
 
@@ -29,7 +30,7 @@ class WikiRoutes(private val repo: WikiRepository) {
         onComplete(repo.search(q, from, size)) {
           case Success(response) =>
             val hits = response.getHits.getHits
-            complete(write(hits.map(doc => write(doc.getSourceAsString))))
+            complete(write(hits.map(doc => mapAsScalaMap(doc.getSource))))
           case Failure(_) =>
             complete(StatusCodes.InternalServerError)
         }

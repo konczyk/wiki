@@ -20,4 +20,5 @@ object Indexer extends App {
   val indexed = index(parser, 0)
   println(s"Indexed $indexed pages")
   conf.client.close()
+  parser.close()
 }

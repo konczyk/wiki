@@ -9,7 +9,7 @@ import org.json4s.native.JsonMethods._
 
 import scala.concurrent.Future
 
-case class WikiRepository(conf: ElasticSearchConf) {
+class WikiRepository(private val conf: ElasticSearchConf) {
 
   private val dbIndex = conf.index
   private val dbClient = conf.client

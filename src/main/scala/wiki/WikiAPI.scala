@@ -18,8 +18,8 @@ object WikiAPI extends App {
   val port = conf.getInt("port")
 
   val esConf = new ElasticSearchConf()
-  val repo = WikiRepository(esConf)
-  val routes = WikiRoutes(repo).routes
+  val repo = new WikiRepository(esConf)
+  val routes = new WikiRoutes(repo).routes
 
   val bindingFuture = Http().bindAndHandle(routes, "localhost", 9000)
 

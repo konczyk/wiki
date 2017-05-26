@@ -9,17 +9,19 @@ class Parser(src: Source) extends Iterator[Page] {
 
   private val reader = new XMLEventReader(src)
 
-  def hasNext: Boolean = reader.exists {
+  override def hasNext: Boolean = reader.exists {
     case EvElemStart(_, "page", _, _) => true
     case _ => false
   }
 
-  def next: Page = {
+  override def next: Page = {
     val title = getElement("title")
     val id = getElement("id")
     val text = getElement("text")
     Page(id, title, text)
   }
+
+  def close(): Unit = reader.stop()
 
   private def getElement(element: String) = {
     import scala.collection.mutable

@@ -4,7 +4,6 @@ import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.{SearchHit, SearchHits}
-import org.json4s.native.Serialization.write
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FunSuite, Matchers}
 
@@ -12,8 +11,6 @@ import scala.concurrent.Future
 
 class WikiRoutesTest extends FunSuite
   with Matchers with ScalatestRouteTest with MockFactory {
-
-  implicit val formats = org.json4s.DefaultFormats
 
   def mockPageRepo(page: String): WikiRepository = {
     class GetResponseWrapper extends GetResponse(null)
